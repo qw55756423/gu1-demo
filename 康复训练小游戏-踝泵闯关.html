@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>踝泵运动闯关 · 骨一智慧护理</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:#e8edf2;
+    display:flex; justify-content:center; min-height:100vh;
+  }
+  .phone { width:100%; max-width:430px; background:linear-gradient(180deg,#E8F1FD,#fff); min-height:100vh; position:relative; overflow:hidden; }
+  .hd { background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff; padding:34px 20px 22px; border-radius:0 0 22px 22px; text-align:center; }
+  .hd .sub { font-size:11px; opacity:.85; letter-spacing:1px; }
+  .hd h1 { font-size:21px; margin-top:4px; }
+  .hd .tip { font-size:11.5px; opacity:.9; margin-top:6px; }
+  .levels { display:flex; justify-content:center; gap:14px; margin:16px 0 4px; }
+  .lv { text-align:center; }
+  .lv .dot {
+    width:40px; height:40px; border-radius:50%; background:#fff; border:2px solid #cdd9ec;
+    display:flex; align-items:center; justify-content:center; font-weight:700; color:#9AA7B8; font-size:15px;
+    margin:0 auto; transition:all .3s;
+  }
+  .lv.cur .dot { background:#1565D8; border-color:#1565D8; color:#fff; transform:scale(1.12); }
+  .lv.done .dot { background:#0E9BD8; border-color:#0E9BD8; color:#fff; }
+  .lv .nm { font-size:10.5px; color:#5B6B7E; margin-top:4px; }
+  .stage { text-align:center; padding:6px 20px 0; }
+  .action-name { font-size:17px; font-weight:700; color:#0B4EA2; }
+  .action-desc { font-size:12px; color:#5B6B7E; margin-top:4px; min-height:32px; }
+  .foot-wrap { height:150px; display:flex; align-items:center; justify-content:center; margin:4px 0; }
+  #foot { font-size:96px; transition:transform .25s; display:inline-block; }
+  .count { font-size:15px; color:#1F2D3D; font-weight:700; }
+  .count b { font-size:30px; color:#1565D8; }
+  .bar { width:76%; height:10px; background:#e2eaf6; border-radius:6px; margin:10px auto 0; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,#1565D8,#0E9BD8); border-radius:6px; transition:width .2s; }
+  #tapBtn {
+    display:block; width:200px; height:200px; border-radius:50%; border:none; margin:14px auto;
+    background:linear-gradient(135deg,#1565D8,#2E7CE6); color:#fff; font-size:22px; font-weight:700;
+    box-shadow:0 10px 26px rgba(21,101,216,.35); cursor:pointer; font-family:inherit;
+  }
+  #tapBtn:active { transform:scale(.95); }
+  .enc { font-size:12px; color:#5B6B7E; text-align:center; min-height:20px; padding:0 24px; }
+  .overlay {
+    position:absolute; inset:0; background:rgba(255,255,255,.96); display:none;
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; z-index:5;
+  }
+  .overlay.show { display:flex; }
+  .stars { font-size:44px; letter-spacing:8px; color:#F5A623; }
+  .overlay h2 { color:#0B4EA2; font-size:24px; margin:14px 0 8px; }
+  .overlay p { color:#5B6B7E; font-size:13.5px; line-height:1.9; }
+  .overlay .again {
+    margin-top:22px; background:#1565D8; color:#fff; border:none; padding:12px 44px;
+    border-radius:26px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .foot-note { position:absolute; bottom:10px; width:100%; text-align:center; font-size:10px; color:#a4b3af; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="hd">
+    <div class="sub">十堰市太和医院 · 骨科一病区</div>
+    <h1>踝泵运动闯关</h1>
+    <div class="tip">预防下肢深静脉血栓 · 每天三组 · 跟着做就行</div>
+  </div>
+
+  <div class="levels">
+    <div class="lv" id="lv0"><div class="dot">1</div><div class="nm">勾脚</div></div>
+    <div class="lv" id="lv1"><div class="dot">2</div><div class="nm">绷脚</div></div>
+    <div class="lv" id="lv2"><div class="dot">3</div><div class="nm">环绕</div></div>
+  </div>
+
+  <div class="stage">
+    <div class="action-name" id="aName">第 1 关：勾脚</div>
+    <div class="action-desc" id="aDesc">脚尖缓缓向身体方向勾起，保持 3 秒</div>
+    <div class="foot-wrap"><span id="foot">🦶</span></div>
+    <div class="count">已完成 <b id="cnt">0</b> / <span id="goal">10</span> 次</div>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+
+  <button id="tapBtn">做了一次<br>点我</button>
+  <div class="enc" id="enc">跟着节奏来，您做得很棒！</div>
+  <div class="foot-note">AI 辅助制作 · 演示版 · 康复计划请遵医嘱</div>
+
+  <div class="overlay" id="win">
+    <div class="stars">★★★</div>
+    <h2>闯关成功！</h2>
+    <p>您已完成今日踝泵训练<br>勾脚 10 次 · 绷脚 10 次 · 环绕 5 次<br><br>坚持锻炼，血栓远离您<br>明天也要记得来打卡哦</p>
+    <button class="again" onclick="location.reload()">再来一组</button>
+  </div>
+</div>
+
+<script>
+const levels = [
+  { name: "第 1 关：勾脚", desc: "脚尖缓缓向身体方向勾起，保持 3 秒", goal: 10, rot: -25 },
+  { name: "第 2 关：绷脚", desc: "脚尖缓缓向下绷直，保持 3 秒", goal: 10, rot: 25 },
+  { name: "第 3 关：环绕", desc: "以踝关节为中心，脚趾画圈", goal: 5, rot: 0 },
+];
+const cheers = ["很好，继续保持！", "动作很标准！", "您真棒！", "再坚持一下！", "胜利就在前面！"];
+let cur = 0, cnt = 0;
+const $ = id => document.getElementById(id);
+
+function render() {
+  const L = levels[cur];
+  $("aName").textContent = L.name;
+  $("aDesc").textContent = L.desc;
+  $("cnt").textContent = cnt;
+  $("goal").textContent = L.goal;
+  $("bar").style.width = (cnt / L.goal * 100) + "%";
+  for (let i = 0; i < 3; i++) {
+    $("lv" + i).className = "lv" + (i < cur ? " done" : i === cur ? " cur" : "");
+  }
+}
+$("tapBtn").addEventListener("click", () => {
+  cnt++;
+  const f = $("foot");
+  f.style.transform = `rotate(${levels[cur].rot}deg) scale(1.15)`;
+  setTimeout(() => f.style.transform = "rotate(0deg) scale(1)", 260);
+  $("enc").textContent = cheers[Math.floor(Math.random() * cheers.length)];
+  if (cnt >= levels[cur].goal) {
+    if (cur === 2) { render(); setTimeout(() => $("win").classList.add("show"), 350); return; }
+    cur++; cnt = 0;
+    $("enc").textContent = "恭喜过关！进入下一关";
+  }
+  render();
+});
+render();
+</script>
+</body>
+</html>

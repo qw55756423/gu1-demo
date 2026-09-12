@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>骨一智慧护理 · 十堰市太和医院骨科一病区</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    background:#e8edf2; display:flex; justify-content:center; min-height:100vh;
+  }
+  .phone {
+    width:100%; max-width:430px; background:#f4f7f8; min-height:100vh;
+    position:relative; padding-bottom:70px; box-shadow:0 0 30px rgba(0,0,0,.12);
+  }
+  /* 顶部 */
+  .header {
+    background:linear-gradient(135deg,#0B4EA2,#2E7CE6);
+    padding:38px 20px 60px; color:#fff; border-radius:0 0 22px 22px;
+  }
+  .header .hosp { font-size:12px; opacity:.9; letter-spacing:1px; }
+  .header h1 { font-size:23px; margin-top:4px; letter-spacing:1px; }
+  .header .slogan { font-size:12.5px; opacity:.92; margin-top:6px; }
+  .header .badge {
+    display:inline-block; margin-top:10px; font-size:11px; background:rgba(255,255,255,.2);
+    border:1px solid rgba(255,255,255,.45); padding:2px 10px; border-radius:20px;
+  }
+  /* 快捷导航 */
+  .quick {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+    margin:-34px 14px 0; position:relative; z-index:2;
+  }
+  .quick a {
+    background:#fff; border-radius:12px; padding:12px 4px 10px; text-align:center;
+    text-decoration:none; color:#333; box-shadow:0 3px 10px rgba(20,60,50,.08);
+  }
+  .quick .ic {
+    width:42px; height:42px; border-radius:50%; margin:0 auto 6px;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:17px; font-weight:700;
+  }
+  .quick .t { font-size:11.5px; color:#3a4a45; font-weight:600; }
+  .c1{background:#1565D8;} .c2{background:#0B4EA2;} .c3{background:#2E7CE6;} .c4{background:#0E9BD8;}
+  /* 卡片 */
+  .sec { margin:16px 14px 0; }
+  .sec-title { font-size:15.5px; font-weight:700; color:#0B4EA2; margin-bottom:8px; display:flex; align-items:center; }
+  .sec-title::before { content:""; width:4px; height:15px; background:#2E7CE6; border-radius:2px; margin-right:7px; }
+  .card {
+    background:#fff; border-radius:12px; padding:13px 15px; margin-bottom:9px;
+    box-shadow:0 2px 8px rgba(20,60,50,.05);
+  }
+  .card h3 { font-size:14px; color:#123c33; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .card h3 .arrow { font-size:12px; color:#9fb3ad; transition:transform .25s; }
+  .card.open h3 .arrow { transform:rotate(180deg); }
+  .card .body { display:none; font-size:12.5px; color:#55645f; line-height:1.85; padding-top:8px; border-top:1px dashed #e2eae7; margin-top:8px; }
+  .card.open .body { display:block; }
+  .card .body b { color:#0B4EA2; }
+  .tag { display:inline-block; font-size:10.5px; background:#E8F1FD; color:#0B4EA2; border-radius:4px; padding:1px 7px; margin:2px 4px 2px 0; }
+  /* 时间轴 */
+  .flow { display:flex; justify-content:space-between; margin:4px 2px 2px; }
+  .flow div { text-align:center; flex:1; font-size:11px; color:#7b8b86; }
+  .flow span { display:block; width:26px; height:26px; line-height:26px; margin:0 auto 4px; border-radius:50%; background:#2E7CE6; color:#fff; font-weight:700; font-size:12px; }
+  /* 宣教格子 */
+  .edu-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .edu {
+    background:#fff; border-radius:12px; padding:12px; box-shadow:0 2px 8px rgba(20,60,50,.05);
+  }
+  .edu .qr {
+    width:100%; aspect-ratio:1; border-radius:8px; background:repeating-linear-gradient(45deg,#eef3f1,#eef3f1 8px,#e2eae7 8px,#e2eae7 16px);
+    display:flex; align-items:center; justify-content:center; color:#8fa39d; font-size:11px; text-align:center; padding:6px;
+  }
+  .edu .n { font-size:12px; font-weight:600; color:#2c3b37; margin-top:7px; }
+  .edu .d { font-size:10.5px; color:#90a19c; margin-top:2px; }
+  /* 底部导航 */
+  .tabbar {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:430px; background:#fff; display:flex;
+    border-top:1px solid #e5ebe9; padding:7px 0 10px; z-index:10;
+  }
+  .tabbar a { flex:1; text-align:center; font-size:10.5px; color:#93a49f; text-decoration:none; }
+  .tabbar a.on { color:#1565D8; font-weight:700; }
+  .tabbar .i { font-size:17px; display:block; margin-bottom:2px; }
+  .foot { text-align:center; font-size:10.5px; color:#a4b3af; margin:20px 14px 8px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="header">
+    <div class="hosp">十堰市太和医院 · 骨科一病区</div>
+    <h1>骨一智慧护理</h1>
+    <div class="slogan">从入院到出院，全程守护您的骨骼健康</div>
+    <span class="badge">预见性护理 · 主动服务</span>
+  </div>
+
+  <div class="quick">
+    <a href="#ruyuan"><div class="ic c1">入</div><div class="t">入院须知</div></a>
+    <a href="#shuqian"><div class="ic c2">术</div><div class="t">术前准备</div></a>
+    <a href="#shuhou"><div class="ic c3">护</div><div class="t">术后护理</div></a>
+    <a href="#chuyuan"><div class="ic c4">家</div><div class="t">出院指导</div></a>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">就诊全流程</div>
+    <div class="card">
+      <div class="flow">
+        <div><span>1</span>入院</div>
+        <div><span>2</span>术前</div>
+        <div><span>3</span>手术</div>
+        <div><span>4</span>康复</div>
+        <div><span>5</span>出院</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="ruyuan">
+    <div class="sec-title">入院须知</div>
+    <div class="card open">
+      <h3>入院需要准备什么 <span class="arrow">▼</span></h3>
+      <div class="body">
+        <b>证件类：</b>身份证、医保卡（电子医保凭证亦可）、转诊单（如有）。<br>
+        <b>物品类：</b>宽松衣物、防滑拖鞋、既往影像资料（X光/CT/MRI片及报告）。<br>
+        <b>费用：</b>支持医保即时结算；可使用床旁结算，少跑腿。<br>
+        <b>陪护：</b>病区推行<b>免陪护/少陪护</b>服务，专业护理员持证上岗，家属可安心。
+      </div>
+    </div>
+    <div class="card">
+      <h3>住院期间检查怎么安排 <span class="arrow">▼</span></h3>
+      <div class="body">
+        入院后由责任护士为您制定检查计划单，<b>检查时间、地点、注意事项</b>逐项告知；空腹检查项目会提前一晚提醒您。
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="shuqian">
+    <div class="sec-title">术前准备</div>
+    <div class="card">
+      <h3>术前一日清单 <span class="arrow">▼</span></h3>
+      <div class="body">
+        <b>禁食8小时、禁饮4小时</b>（具体时间护士会按手术顺序通知）；<br>
+        术区皮肤准备与清洁沐浴；取下首饰、义齿、美甲；<br>
+        准备好术后用品：护理垫、便器（床上排便训练护士会提前指导）。
+      </div>
+    </div>
+    <div class="card">
+      <h3>术前紧张怎么办 <span class="arrow">▼</span></h3>
+      <div class="body">
+        可观看<b>“手术室云参观”</b>视频，提前了解手术环境与流程；责任护士会进行一对一术前宣教与心理疏导，有任何担心随时按呼叫器。
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="shuhou">
+    <div class="sec-title">术后护理</div>
+    <div class="card">
+      <h3>防血栓：踝泵运动（必做） <span class="arrow">▼</span></h3>
+      <div class="body">
+        麻醉清醒后即可开始：<b>勾脚—绷脚—环绕</b>，每组20-30次，每天3-4组。这是预防下肢深静脉血栓<b>最简单也最重要</b>的动作，宣教视频可扫码反复观看。
+      </div>
+    </div>
+    <div class="card">
+      <h3>疼痛管理与管路护理 <span class="arrow">▼</span></h3>
+      <div class="body">
+        疼痛评分≥4分请告知护士，<b>不必忍痛</b>；引流管保持通畅、勿打折牵拉，翻身时护士会协助固定。
+      </div>
+    </div>
+    <div class="card">
+      <h3>什么时候可以下床 <span class="arrow">▼</span></h3>
+      <div class="body">
+        遵循<b>快速康复（ERAS）</b>理念，医生评估后尽早下地。首次下床实行“三步曲”：床上坐30秒→床边站30秒→再行走，预防体位性低血压。
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="chuyuan">
+    <div class="sec-title">出院指导</div>
+    <div class="card">
+      <h3>回家后康复计划 <span class="arrow">▼</span></h3>
+      <div class="body">
+        出院前护士会发放<b>个体化功能锻炼计划单</b>：包括每日锻炼动作、频次、负重时间轴；扫码加入<b>线上随访</b>，锻炼视频打卡，异常及时提醒。
+      </div>
+    </div>
+    <div class="card">
+      <h3>复诊与紧急情况 <span class="arrow">▼</span></h3>
+      <div class="body">
+        <b>复诊时间：</b>术后1个月、3个月、6个月门诊复查（携带影像资料）。<br>
+        <b>出现以下情况请及时就医：</b>伤口红肿渗液、突发剧烈疼痛、小腿肿胀压痛、发热超过38.5℃。
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">健康教育视频库</div>
+    <div class="edu-grid">
+      <div class="edu"><div class="qr">视频二维码<br>（部署后生成）</div><div class="n">踝泵运动教学</div><div class="d">防血栓必看 · 2分钟</div></div>
+      <div class="edu"><div class="qr">视频二维码<br>（部署后生成）</div><div class="n">助行器正确使用</div><div class="d">下地行走第一课</div></div>
+      <div class="edu"><div class="qr">视频二维码<br>（部署后生成）</div><div class="n">关节置换术后康复</div><div class="d">分阶段跟练</div></div>
+      <div class="edu"><div class="qr">视频二维码<br>（部署后生成）</div><div class="d">手术室云参观</div><div class="n">缓解术前焦虑</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">科室与专科特色</div>
+    <div class="card">
+      <h3>骨科一病区 <span class="arrow">▼</span></h3>
+      <div class="body">
+        骨关节疾病诊疗中心，开展髋膝关节置换、运动医学、创伤骨科等业务。护理品牌项目：<b>预见性护理</b>——把风险想在前面、把护理做在前面。
+        <div style="margin-top:6px;">
+          <span class="tag">预见性护理</span><span class="tag">快速康复ERAS</span><span class="tag">免陪护病区</span><span class="tag">老年友好病房</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>位置与联系 <span class="arrow">▼</span></h3>
+      <div class="body">
+        十堰市太和医院外科楼（楼层信息以院内导引为准）。<br>
+        护士站电话：0719-XXXXXXX（演示占位）
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    本页面为 AI 辅助制作的演示版 · 制作者：骨科一病区 黄珂<br>
+    正式版可对接医院官方平台，数据以医院发布为准
+  </div>
+
+  <div class="tabbar">
+    <a href="#" class="on"><span class="i">⌂</span>首页</a>
+    <a href="#"><span class="i">▤</span>宣教</a>
+    <a href="#"><span class="i">⚕</span>科室</a>
+    <a href="#"><span class="i">☺</span>我的</a>
+  </div>
+
+</div>
+<script>
+  document.querySelectorAll('.card h3').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨一智慧护理演示入口 · 十堰市太和医院骨科一病区</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body {
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    background:#eef2f6; display:flex; flex-direction:column; height:100dvh; overflow:hidden;
+  }
+  /* ===== 顶部品牌栏 ===== */
+  .topbar {
+    background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff;
+    padding:12px 18px 10px; flex-shrink:0;
+  }
+  .topbar .row { max-width:960px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand .logo {
+    width:36px; height:36px; border-radius:9px; background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.4);
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px;
+  }
+  .brand .t1 { font-size:15px; font-weight:700; letter-spacing:1px; }
+  .brand .t2 { font-size:10.5px; opacity:.85; letter-spacing:1.5px; }
+  .warm-pill {
+    font-size:12px; font-weight:700; background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.4); padding:4px 14px; border-radius:20px; white-space:nowrap;
+  }
+  /* ===== 选项卡 ===== */
+  .tabbar { background:#dde6ef; padding:6px 10px; flex-shrink:0; }
+  .tabbar .row { max-width:960px; margin:0 auto; display:flex; gap:5px; overflow-x:auto; }
+  .tabbar button {
+    flex:1; min-width:fit-content; border:none; background:transparent; padding:9px 12px;
+    font-size:13px; font-weight:600; color:#5a6b7d; border-radius:9px; cursor:pointer;
+    font-family:inherit; transition:all .2s; white-space:nowrap;
+  }
+  .tabbar button.on { background:#fff; color:#0B4EA2; box-shadow:0 2px 8px rgba(20,60,90,.15); }
+  /* ===== 面板 ===== */
+  .panels { flex:1; overflow:hidden; position:relative; }
+  .panel { position:absolute; inset:0; overflow-y:auto; display:none; }
+  .panel.on { display:block; }
+  .panel.fill { overflow:hidden; }
+  .panel.fill iframe { width:100%; height:100%; border:none; display:block; }
+
+  /* ================= 首页 ================= */
+  #p-home { background:#eef2f6; }
+  .home-wrap { max-width:960px; margin:0 auto; padding:20px 16px 40px; }
+  .home-hero { text-align:center; margin-bottom:18px; }
+  .home-hero h1 { font-size:21px; color:#0B4EA2; letter-spacing:1px; }
+  .home-hero p { font-size:12.5px; color:#6a7a8a; margin-top:5px; line-height:1.8; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+  .card {
+    background:#fff; border-radius:14px; padding:16px; box-shadow:0 3px 12px rgba(20,60,90,.07);
+    cursor:pointer; transition:transform .15s;
+  }
+  .card:active { transform:scale(.98); }
+  .card .c-ic {
+    width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-size:21px; color:#fff; margin-bottom:9px;
+  }
+  .i1{background:linear-gradient(135deg,#0B4EA2,#2E7CE6);} .i2{background:linear-gradient(135deg,#0d7a4f,#27ae60);}
+  .i3{background:linear-gradient(135deg,#5a3fa0,#8a5fd8);} .i4{background:linear-gradient(135deg,#c0392b,#e67e22);}
+  .card h3 { font-size:14.5px; color:#12303f; }
+  .card .c-tag { font-size:10px; color:#2E7CE6; background:#E8F1FD; border-radius:9px; padding:1px 7px; margin-left:5px; }
+  .card .desc { font-size:11.5px; color:#5a6b7d; line-height:1.8; margin-top:7px; }
+  .home-qr { text-align:center; margin-top:22px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 3px 12px rgba(20,60,90,.07); }
+  .home-qr img { width:150px; height:150px; border-radius:8px; border:1px solid #e3eaf1; }
+  .home-qr .t { font-size:12px; color:#0B4EA2; font-weight:700; margin-top:8px; }
+  .home-qr .s { font-size:11px; color:#9aa8b5; margin-top:3px; line-height:1.7; }
+  .home-note { margin-top:14px; font-size:11px; color:#8a97a5; text-align:center; line-height:1.8; }
+
+  /* ================= 3D 云参观 ================= */
+  #p-tour { background:#0a1e3c; overflow:hidden; }
+  .tour-wrap { position:relative; width:100%; height:100%; overflow:hidden; }
+  .t-topbar {
+    position:absolute; top:0; left:0; right:0; z-index:30;
+    display:flex; align-items:center; justify-content:flex-end;
+    padding:10px 16px; pointer-events:none;
+  }
+  .proto-badge {
+    font-size:10.5px; background:rgba(46,124,230,.22); color:#9ec7ff;
+    border:1px solid rgba(120,180,255,.4); padding:3px 10px; border-radius:20px; letter-spacing:1px;
+  }
+  .t-viewport { position:absolute; inset:0; overflow:hidden; cursor:grab; }
+  .t-viewport.dragging { cursor:grabbing; }
+  .t-stage { position:absolute; top:0; left:0; height:100%; transition:transform .08s linear; will-change:transform; }
+  .t-stage img { height:100%; display:block; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+  .t-stage.zoomin { animation:zoomin .9s ease both; }
+  @keyframes zoomin { 0%{ transform:scale(1.35)!important; opacity:.4; } 100%{ opacity:1; } }
+  .hotspot { position:absolute; transform:translate(-50%,-50%); z-index:10; cursor:pointer; }
+  .hotspot .dot {
+    width:20px; height:20px; border-radius:50%; background:#2E7CE6; border:3px solid #fff;
+    box-shadow:0 0 0 0 rgba(46,124,230,.7); animation:pulse 2s infinite; margin:0 auto;
+  }
+  @keyframes pulse {
+    0% { box-shadow:0 0 0 0 rgba(46,124,230,.65); }
+    70% { box-shadow:0 0 0 16px rgba(46,124,230,0); }
+    100% { box-shadow:0 0 0 0 rgba(46,124,230,0); }
+  }
+  .hotspot .lbl {
+    margin-top:6px; font-size:11.5px; color:#fff; background:rgba(6,25,52,.78); padding:3px 10px;
+    border-radius:14px; white-space:nowrap; border:1px solid rgba(140,190,255,.35);
+  }
+  .t-scene-title {
+    position:absolute; top:44px; left:50%; transform:translateX(-50%); z-index:25; text-align:center;
+    text-shadow:0 2px 10px rgba(0,0,0,.6); pointer-events:none; width:94%; color:#fff;
+  }
+  .t-scene-title .step { font-size:11px; letter-spacing:3px; color:#9ec7ff; }
+  .t-scene-title h2 { font-size:20px; letter-spacing:2px; margin-top:2px; }
+  .t-scene-title .nurse {
+    margin:8px auto 0; max-width:430px; font-size:12px; line-height:1.7; color:#dce9fa;
+    background:rgba(6,25,52,.55); border:1px solid rgba(140,190,255,.25);
+    padding:7px 14px; border-radius:12px;
+  }
+  .t-infocard {
+    position:absolute; left:50%; bottom:108px; transform:translate(-50%,20px); z-index:40;
+    width:min(430px,92%); background:rgba(255,255,255,.97); color:#1c2b3a;
+    border-radius:16px; padding:15px 17px 13px; box-shadow:0 10px 40px rgba(0,0,0,.4);
+    opacity:0; pointer-events:none; transition:all .3s ease;
+  }
+  .t-infocard.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+  .t-infocard .ic-tag { font-size:10.5px; color:#2E7CE6; font-weight:700; letter-spacing:1px; }
+  .t-infocard h3 { font-size:16px; color:#0B4EA2; margin:3px 0 6px; }
+  .t-infocard p { font-size:13px; line-height:1.85; color:#40505f; }
+  .t-infocard .ic-close { position:absolute; top:8px; right:12px; font-size:18px; color:#9aa8b5; cursor:pointer; }
+  .t-bottombar {
+    position:absolute; left:0; right:0; bottom:0; z-index:30;
+    padding:10px 14px 12px; background:linear-gradient(0deg,rgba(6,25,52,.9),rgba(6,25,52,0));
+  }
+  .t-nextbtn {
+    display:block; margin:0 auto 10px; width:min(340px,86%);
+    background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff; border:none;
+    font-size:14.5px; font-weight:700; letter-spacing:2px; padding:11px 0; border-radius:30px;
+    cursor:pointer; box-shadow:0 6px 18px rgba(11,78,162,.5); font-family:inherit;
+  }
+  .t-nextbtn:active { transform:scale(.97); }
+  .t-steps { display:flex; justify-content:center; gap:6px; }
+  .t-steps .stp {
+    flex:1; max-width:110px; text-align:center; font-size:10.5px; color:#8fa9c9; cursor:pointer;
+    padding-top:9px; position:relative;
+  }
+  .t-steps .stp::before {
+    content:""; position:absolute; top:0; left:15%; right:15%; height:3px; border-radius:2px;
+    background:rgba(140,170,210,.3);
+  }
+  .t-steps .stp.cur { color:#fff; font-weight:700; }
+  .t-steps .stp.cur::before { background:#2E7CE6; }
+  .t-steps .stp.done { color:#6f9fd8; }
+  .t-steps .stp.done::before { background:#2E7CE6aa; }
+  .t-drag-hint {
+    position:absolute; bottom:96px; left:50%; transform:translateX(-50%); z-index:25;
+    font-size:11px; color:#bcd6f5; background:rgba(6,25,52,.6); padding:4px 14px; border-radius:16px;
+    animation:hintfade 1.2s ease infinite alternate; pointer-events:none; white-space:nowrap;
+  }
+  @keyframes hintfade { from{opacity:.55;} to{opacity:1;} }
+  .t-overlay {
+    position:absolute; inset:0; z-index:100; background:rgba(5,18,38,.88);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    transition:opacity .4s ease;
+  }
+  .t-overlay.hide { opacity:0; pointer-events:none; }
+  .t-box {
+    width:min(460px,94%); background:#fff; color:#1c2b3a; border-radius:20px; padding:24px 22px 20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5); text-align:center; max-height:92%; overflow-y:auto;
+  }
+  .t-box .ib-badge {
+    display:inline-block; font-size:11px; color:#2E7CE6; background:#E8F1FD;
+    padding:3px 12px; border-radius:14px; font-weight:700; letter-spacing:1px;
+  }
+  .t-box h1 { font-size:20px; color:#0B4EA2; margin:10px 0 4px; letter-spacing:1px; }
+  .t-box .ib-sub { font-size:12px; color:#8a97a5; margin-bottom:12px; }
+  .t-box p { font-size:13px; line-height:1.95; color:#40505f; text-align:left; }
+  .t-box p b { color:#0B4EA2; }
+  .t-box .startbtn {
+    margin-top:16px; width:100%; background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff;
+    border:none; font-size:15px; font-weight:700; letter-spacing:3px; padding:12px 0;
+    border-radius:30px; cursor:pointer; font-family:inherit; box-shadow:0 6px 18px rgba(11,78,162,.4);
+  }
+  .t-box .ib-note { margin-top:10px; font-size:11px; color:#9aa8b5; line-height:1.7; }
+  #tFinish { display:none; }
+  #tFinish.show { display:flex; }
+  #tFinish .t-box h1 { color:#0d7a4f; }
+  #tFinish .warm { margin-top:10px; font-size:14px; color:#0B4EA2; font-weight:700; letter-spacing:1px; }
+
+  /* ================= AI 助手 ================= */
+  #p-ai { background:#f4f7f8; display:none; flex-direction:column; }
+  #p-ai.on { display:flex; }
+  .ai-subtabs { display:flex; gap:6px; padding:10px 14px 0; flex-shrink:0; }
+  .ai-subtabs button {
+    flex:1; border:1px solid #c9d7e6; background:#fff; padding:8px 0; font-size:12.5px; font-weight:600;
+    color:#5a6b7d; border-radius:9px; cursor:pointer; font-family:inherit;
+  }
+  .ai-subtabs button.on { background:#0B4EA2; color:#fff; border-color:#0B4EA2; }
+  #ai-chat { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .chat-box { flex:1; padding:14px 14px 8px; overflow-y:auto; }
+  .msg { display:flex; margin-bottom:12px; }
+  .msg .avatar {
+    width:32px; height:32px; border-radius:50%; flex-shrink:0; margin-right:8px;
+    background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff; font-size:13px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .msg .bub {
+    max-width:78%; padding:10px 13px; border-radius:14px; font-size:13.5px; line-height:1.8;
+    background:#fff; color:#2a3a48; box-shadow:0 2px 6px rgba(20,60,90,.06);
+    border-top-left-radius:4px; white-space:pre-wrap;
+  }
+  .msg.me { justify-content:flex-end; }
+  .msg.me .bub { background:#0B4EA2; color:#fff; border-radius:14px; border-top-right-radius:4px; }
+  .bub.typing::after { content:"▋"; animation:blink 1s infinite; color:#2E7CE6; }
+  @keyframes blink { 50%{opacity:0;} }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; padding:6px 14px 10px; flex-shrink:0; }
+  .chips .chip {
+    font-size:12px; background:#fff; color:#0B4EA2; border:1px solid #c4d6ee;
+    padding:5px 12px; border-radius:16px; cursor:pointer;
+  }
+  .inputbar { display:flex; gap:8px; padding:10px 14px 14px; flex-shrink:0; }
+  .inputbar input {
+    flex:1; border:1px solid #d5dfe9; border-radius:22px; padding:10px 15px; font-size:13.5px;
+    outline:none; font-family:inherit; background:#fff;
+  }
+  .inputbar input:focus { border-color:#2E7CE6; }
+  .inputbar button {
+    background:linear-gradient(135deg,#0B4EA2,#2E7CE6); color:#fff; border:none; border-radius:22px;
+    padding:0 18px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  #ai-video { display:none; padding:14px; overflow-y:auto; }
+  .video-card { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 2px 10px rgba(20,60,90,.08); max-width:640px; margin:0 auto; }
+  .video-card video { width:100%; display:block; background:#000; }
+  .video-card .vc-body { padding:13px 15px; }
+  .video-card h3 { font-size:15px; color:#0B4EA2; }
+  .video-card .vc-meta { font-size:11.5px; color:#8a97a5; margin:4px 0 8px; }
+  .video-card p { font-size:12.5px; color:#55646f; line-height:1.85; }
+  .feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-top:12px; max-width:640px; margin-left:auto; margin-right:auto; }
+  .feat { background:#fff; border-radius:12px; padding:11px 12px; box-shadow:0 2px 8px rgba(20,60,90,.05); }
+  .feat .f-ic { font-size:18px; }
+  .feat h4 { font-size:12.5px; color:#0B4EA2; margin:4px 0 3px; }
+  .feat p { font-size:11px; color:#7a8794; line-height:1.7; }
+
+  @media (max-width:520px){
+    .warm-pill { display:none; }
+    .home-hero h1 { font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部品牌栏 -->
+<div class="topbar">
+  <div class="row">
+    <div class="brand">
+      <div class="logo">太</div>
+      <div>
+        <div class="t1">骨一智慧护理演示入口</div>
+        <div class="t2">十堰市太和医院 · 骨科一病区 · 雏形系列</div>
+      </div>
+    </div>
+    <div class="warm-pill">AI 提效率 · 护理给温度</div>
+  </div>
+</div>
+
+<!-- 选项卡 -->
+<div class="tabbar">
+  <div class="row">
+    <button class="on" data-tab="home" onclick="goTab('home')">🏠 首页</button>
+    <button data-tab="tour" onclick="goTab('tour')">🥽 3D云参观</button>
+    <button data-tab="ai" onclick="goTab('ai')">🤖 AI宣教助手</button>
+    <button data-tab="game" onclick="goTab('game')">🎮 踝泵闯关</button>
+    <button data-tab="app" onclick="goTab('app')">📱 小程序</button>
+  </div>
+</div>
+
+<div class="panels">
+
+  <!-- ===== 首页 ===== -->
+  <div class="panel on" id="p-home">
+    <div class="home-wrap">
+      <div class="home-hero">
+        <h1>五个雏形，都是真实可点、可玩、可扫的成品</h1>
+        <p>点击卡片直接进入对应演示 ｜ 全部内容均为概念验证雏形，正式版需信息科接口 + 护理部审核</p>
+      </div>
+      <div class="grid">
+        <div class="card" onclick="goTab('tour')">
+          <div class="c-ic i3">🥽</div>
+          <h3>3D 术前云参观<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">没进手术室，先走一遍手术室：病房 → 准备间 → 手术室 → 复苏室，点热点听讲解。</div>
+        </div>
+        <div class="card" onclick="goTab('ai')">
+          <div class="c-ic i4">🤖</div>
+          <h3>AI 宣教问答 + 数字人<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">患者凌晨的问题 AI 先答；数字人宣教视频一次制作、永久复用，支持方言。</div>
+        </div>
+        <div class="card" onclick="goTab('game')">
+          <div class="c-ic i2">🎮</div>
+          <h3>康复训练游戏化<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">踝泵闯关小游戏：勾脚、绷脚、环绕三关，让 80 岁老人主动做功能锻炼。</div>
+        </div>
+        <div class="card" onclick="goTab('app')">
+          <div class="c-ic i1">📱</div>
+          <h3>智慧护理小程序<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">入院 → 术前 → 术后 → 出院全流程宣教，装进每一位患者的手机里。</div>
+        </div>
+      </div>
+      <div class="home-qr">
+        <img id="homeQr" alt="">
+        <div class="t">微信扫码，把演示入口装进口袋</div>
+        <div class="s" id="homeQrTip">上传至可访问链接后，此处自动生成分享二维码</div>
+      </div>
+      <div class="home-note">十堰市太和医院 骨科一病区 · 制作人：黄珂 ｜ 这些都不是概念——每一个，都已经做出来了。</div>
+    </div>
+  </div>
+
+  <!-- ===== 3D 云参观 ===== -->
+  <div class="panel fill" id="p-tour">
+    <div class="tour-wrap" id="tourWrap">
+      <div class="t-topbar"><div class="proto-badge">雏形演示版</div></div>
+      <div class="t-scene-title">
+        <div class="step" id="tStep">第 1 站 / 共 4 站</div>
+        <h2 id="tName">骨科一病区 · 病房走廊</h2>
+        <div class="nurse" id="tNurse"></div>
+      </div>
+      <div class="t-viewport" id="tViewport">
+        <div class="t-stage" id="tStage">
+          <img id="tImg" src="assets/tour_scene_ward.jpg" alt="">
+          <div id="tSpots"></div>
+        </div>
+      </div>
+      <div class="t-drag-hint">← 按住拖动环顾四周，点击蓝色光点听讲解 →</div>
+      <div class="t-infocard" id="tCard">
+        <span class="ic-close" onclick="tCloseCard()">✕</span>
+        <div class="ic-tag" id="tCardTag"></div>
+        <h3 id="tCardTitle"></h3>
+        <p id="tCardText"></p>
+      </div>
+      <div class="t-bottombar">
+        <button class="t-nextbtn" id="tNextBtn" onclick="tNext()">走进下一站 →</button>
+        <div class="t-steps" id="tSteps"></div>
+      </div>
+      <div class="t-overlay" id="tIntro">
+        <div class="t-box">
+          <span class="ib-badge">术前宣教 · 创新雏形</span>
+          <h1>没进手术室，先走一遍手术室</h1>
+          <div class="ib-sub">十堰市太和医院 骨科一病区 · 3D 术前云参观（雏形演示）</div>
+          <p>
+            很多老年患者术前紧张，是因为"<b>不知道接下来会发生什么</b>"。<br>
+            这个云参观，让患者在手机上提前走一遍：<b>病房 → 术前准备间 → 手术室 → 麻醉复苏室</b>，
+            每到一站，点一点蓝色光点，就能听到护士的讲解。<br><br>
+            <b>看得见了，心就不慌了。</b>术前焦虑降下来，配合度提上去——这就是技术背后的护理温度。
+          </p>
+          <button class="startbtn" onclick="document.getElementById('tIntro').classList.add('hide')">开始参观</button>
+          <div class="ib-note">雏形说明：本演示为概念验证版本，正式版将接入科室实景 720° 全景拍摄，经护理部审核后上线。</div>
+        </div>
+      </div>
+      <div class="t-overlay" id="tFinish">
+        <div class="t-box">
+          <span class="ib-badge">参观完成</span>
+          <h1>手术这条路，我们陪您先走了一遍</h1>
+          <div class="ib-sub">骨科一病区全体护士，祝您手术顺利、早日康复</div>
+          <p>回到病房后，您还可以通过"骨一智慧护理小程序"查看术前术后宣教、跟着做踝泵训练游戏。有任何问题，床头的呼叫器和您的责任护士，一直都在。</p>
+          <div class="warm">AI 提效率，护理给温度。</div>
+          <button class="startbtn" onclick="tRestart()">再看一遍</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AI 宣教助手 ===== -->
+  <div class="panel" id="p-ai">
+    <div class="ai-subtabs">
+      <button id="sub-chat" class="on" onclick="aiTab('chat')">💬 AI 宣教问答</button>
+      <button id="sub-video" onclick="aiTab('video')">🎬 数字人宣教视频</button>
+    </div>
+    <div id="ai-chat">
+      <div class="chat-box" id="chatBox"></div>
+      <div class="chips" id="chips"></div>
+      <div class="inputbar">
+        <input id="qInput" placeholder="请输入问题，如：术前能吃饭吗？" onkeydown="if(event.key==='Enter')ask()">
+        <button onclick="ask()">发送</button>
+      </div>
+    </div>
+    <div id="ai-video">
+      <div class="video-card">
+        <video controls playsinline src="assets/digital_nurse_xuanjiao.mp4"></video>
+        <div class="vc-body">
+          <h3>数字人护士 · 术前禁食禁饮宣教</h3>
+          <div class="vc-meta">一次制作 · 永久复用 ｜ 可生成方言版、字幕版</div>
+          <p>宣教口径由科室统一审核后录制脚本，AI 数字人生成播报视频。标准不走样、随时能播放，护士从"重复讲一百遍"中解放出来，把时间留给床边的个性化照护。</p>
+        </div>
+      </div>
+      <div class="feat-grid">
+        <div class="feat"><div class="f-ic">🕐</div><h4>24 小时在线</h4><p>凌晨两点的问题，不用等到天亮</p></div>
+        <div class="feat"><div class="f-ic">🗣️</div><h4>支持方言</h4><p>老年患者听得懂，才算真宣教</p></div>
+        <div class="feat"><div class="f-ic">♾️</div><h4>一次制作永久复用</h4><p>标准宣教不再依赖个人状态</p></div>
+        <div class="feat"><div class="f-ic">🔁</div><h4>内容随指南迭代</h4><p>指南更新了，视频重新生成即可</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 踝泵闯关 ===== -->
+  <div class="panel fill" id="p-game">
+    <iframe src="康复训练小游戏-踝泵闯关.html" title="踝泵闯关"></iframe>
+  </div>
+
+  <!-- ===== 小程序 ===== -->
+  <div class="panel fill" id="p-app">
+    <iframe src="骨科一病区智慧护理小程序-演示版.html" title="智慧护理小程序"></iframe>
+  </div>
+
+</div>
+
+<script>
+/* ========== 选项卡 ========== */
+function goTab(t){
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab===t));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('p-'+t).classList.add('on');
+}
+
+/* ========== 3D 云参观 ========== */
+const tScenes = [
+  {
+    name:"骨科一病区 · 病房走廊", img:"assets/tour_scene_ward.jpg",
+    nurse:"您好，我是您的责任护士。手术前几天您就住在这里，有任何需要，按床头呼叫器，我们 24 小时都在。",
+    spots:[
+      { x:72, y:46, tag:"第一站 · 病房", title:"您的病房", text:"入院后责任护士会为您做一对一宣教：核对腕带信息、介绍环境、评估跌倒风险。老年患者我们会放慢语速、反复确认，家属也可以一起听。" },
+      { x:30, y:38, tag:"第一站 · 护士站", title:"护士站 · 24 小时守护", text:"术前护士会到床边做术前访视：测量生命体征、确认皮肤准备、解答疑问。晚上睡不好也不用忍，告诉我们，我们来想办法。" }
+    ]
+  },
+  {
+    name:"术前准备间", img:"assets/tour_scene_prep.jpg",
+    nurse:"手术当天，您会躺上转运床，由专人护送经过这里进入手术室。家属请在等候区休息，大屏幕会显示手术进程。",
+    spots:[
+      { x:38, y:62, tag:"第二站 · 转运床", title:"躺上转运床之前", text:"请记住：术前 6-8 小时禁食、2 小时禁饮；取下假牙、首饰、隐形眼镜；穿好病号服。这些不是麻烦，是麻醉安全的关键。" },
+      { x:74, y:40, tag:"第二站 · 手术大门", title:"这道门后，是手术部", text:"门内是层流净化手术区，温度常年维持在 22-25℃。家属请在等候区安心等待，手术时长医生会提前告知，有情况会第一时间沟通。" }
+    ]
+  },
+  {
+    name:"手术室", img:"assets/tour_scene_or.jpg",
+    nurse:"这就是手术室。无影灯、麻醉机、监护仪都已备好。您睡着以后，麻醉医生会全程守在您身边，一秒都不会离开。",
+    spots:[
+      { x:50, y:30, tag:"第三站 · 无影灯", title:"手术无影灯与层流净化", text:"手术室采用层流净化系统，空气每小时换气数百次，把感染风险降到最低。无影灯下，是经验丰富的骨科手术团队。" },
+      { x:22, y:55, tag:"第三站 · 麻醉工作站", title:"麻醉医生全程守护", text:"麻醉医生会全程监测您的心率、血压、血氧。老年患者我们会采用更精细的麻醉管理方案，让您睡得安稳、醒得平顺。" }
+    ]
+  },
+  {
+    name:"麻醉复苏室", img:"assets/tour_scene_pacu.jpg",
+    nurse:"手术结束后，您会先在复苏室慢慢醒来，护士守在床边观察。等您完全清醒、生命体征平稳，我们再一起回病房。",
+    spots:[
+      { x:30, y:60, tag:"第四站 · 苏醒观察", title:"在复苏室慢慢醒来", text:"醒来时喉咙可能有点干、伤口可能有点胀，都是正常的。护士会为您做疼痛评分，按需镇痛——疼了一定要说，不用忍。" },
+      { x:70, y:52, tag:"第四站 · 返回病房", title:"回病房后的第一件事", text:"回到病房，护士会指导您做踝泵运动预防血栓，宣教内容在小程序里随时能看，还能跟着康复小游戏一起练。" }
+    ]
+  }
+];
+let tCur=0, tImgW=0, tViewW=0, tPosX=0, tDragging=false, tStartX=0, tStartPos=0, tMoved=false;
+const tViewport = document.getElementById('tViewport');
+const tStage = document.getElementById('tStage');
+const tImg = document.getElementById('tImg');
+function tClamp(x){ return Math.max(Math.min(0, tViewW - tImgW), Math.min(0, x)); }
+function tRender(animate){
+  const s = tScenes[tCur];
+  document.getElementById('tName').textContent = s.name;
+  document.getElementById('tStep').textContent = `第 ${tCur+1} 站 / 共 ${tScenes.length} 站`;
+  document.getElementById('tNurse').textContent = s.nurse;
+  document.getElementById('tNextBtn').textContent = tCur === tScenes.length-1 ? "完成参观 ✓" : "走进下一站 →";
+  tCloseCard();
+  tStage.classList.remove('zoomin');
+  tImg.src = s.img;
+  tImg.onload = () => {
+    const h = tViewport.clientHeight;
+    tImgW = h * (tImg.naturalWidth / tImg.naturalHeight);
+    tViewW = tViewport.clientWidth;
+    tStage.style.width = tImgW + "px";
+    tPosX = tClamp((tViewW - tImgW) / 2);
+    tStage.style.transform = `translateX(${tPosX}px)`;
+    if (animate){ void tStage.offsetWidth; tStage.classList.add('zoomin'); }
+    tRenderSpots(s);
+  };
+  if (tImg.complete && tImg.naturalWidth) tImg.onload();
+  tRenderSteps();
+}
+function tRenderSpots(s){
+  const box = document.getElementById('tSpots');
+  box.innerHTML = "";
+  s.spots.forEach(sp => {
+    const el = document.createElement('div');
+    el.className = 'hotspot';
+    el.style.left = sp.x + "%"; el.style.top = sp.y + "%";
+    el.innerHTML = `<div class="dot"></div><div class="lbl">${sp.title}</div>`;
+    el.addEventListener('click', (e) => {
+      if (tMoved) return;
+      e.stopPropagation();
+      document.getElementById('tCardTag').textContent = sp.tag;
+      document.getElementById('tCardTitle').textContent = sp.title;
+      document.getElementById('tCardText').textContent = sp.text;
+      document.getElementById('tCard').classList.add('show');
+    });
+    box.appendChild(el);
+  });
+}
+function tRenderSteps(){
+  const names = ["病房","术前准备间","手术室","复苏室"];
+  const box = document.getElementById('tSteps');
+  box.innerHTML = "";
+  names.forEach((n,i) => {
+    const d = document.createElement('div');
+    d.className = 'stp' + (i===tCur ? ' cur' : i<tCur ? ' done' : '');
+    d.textContent = n;
+    d.onclick = () => { tCur = i; tRender(true); };
+    box.appendChild(d);
+  });
+}
+function tCloseCard(){ document.getElementById('tCard').classList.remove('show'); }
+function tNext(){
+  if (tCur < tScenes.length - 1){ tCur++; tRender(true); }
+  else document.getElementById('tFinish').classList.add('show');
+}
+function tRestart(){
+  document.getElementById('tFinish').classList.remove('show');
+  tCur = 0; tRender(true);
+}
+function tOnDown(x){ tDragging=true; tMoved=false; tStartX=x; tStartPos=tPosX; tViewport.classList.add('dragging'); }
+function tOnMove(x){
+  if (!tDragging) return;
+  const dx = x - tStartX;
+  if (Math.abs(dx) > 6) tMoved = true;
+  tPosX = tClamp(tStartPos + dx);
+  tStage.style.transform = `translateX(${tPosX}px)`;
+}
+function tOnUp(){ tDragging=false; tViewport.classList.remove('dragging'); }
+tViewport.addEventListener('mousedown', e => tOnDown(e.clientX));
+window.addEventListener('mousemove', e => tOnMove(e.clientX));
+window.addEventListener('mouseup', tOnUp);
+tViewport.addEventListener('touchstart', e => tOnDown(e.touches[0].clientX), {passive:true});
+tViewport.addEventListener('touchmove', e => tOnMove(e.touches[0].clientX), {passive:true});
+tViewport.addEventListener('touchend', tOnUp);
+tViewport.addEventListener('click', () => { if(!tMoved) tCloseCard(); });
+window.addEventListener('resize', () => tRender(false));
+tRender(false);
+
+/* ========== AI 宣教问答 ========== */
+const KB = [
+  { k:["禁食","禁饮","吃饭","喝水","术前能"], q:"手术前能吃饭喝水吗？",
+    a:"手术麻醉前需要禁食禁饮：\n· 固体食物：术前 6-8 小时停止进食\n· 清饮料（清水）：术前 2 小时停止饮用\n\n这是为了防止麻醉中呕吐误吸，是安全底线。具体禁食时间以您的手术安排为准，责任护士会提前一对一通知您。" },
+  { k:["准备","假牙","首饰","眼镜","指甲","穿什么","病号服"], q:"手术当天要做什么准备？",
+    a:"手术当天请注意：\n· 穿好病号服，内衣裤去除\n· 取下假牙、首饰、手表、隐形眼镜\n· 指甲油提前卸除（影响血氧监测）\n· 排空大小便，在病房等待转运\n\n贵重物品请交给家属保管。" },
+  { k:["麻醉","全麻","半麻","疼吗","疼不疼"], q:"手术麻醉疼不疼？会不会醒不过来？",
+    a:"骨科手术常用椎管内麻醉或全身麻醉，麻醉医生会根据您的年龄、心肺情况选择最合适的方案。\n\n麻醉过程中您不会感到疼痛；麻醉医生全程守在您身边监测生命体征。老年患者我们会采用更精细的麻醉管理，术后在复苏室观察平稳后再回病房。" },
+  { k:["疼痛","伤口疼","镇痛","止痛"], q:"术后伤口疼怎么办？要忍着吗？",
+    a:"不用忍！疼痛本身就是需要治疗的：\n· 护士会定时为您做疼痛评分（0-10 分）\n· 按需使用镇痛泵或镇痛药物\n· 良好的镇痛能让您更早下床活动，恢复反而更快\n\n疼了请随时按呼叫器告诉我们。" },
+  { k:["踝泵","勾脚","防栓","血栓","vte"], q:"踝泵运动怎么做？",
+    a:"踝泵运动是预防下肢深静脉血栓最简单有效的方法：\n· 勾脚：脚尖向身体方向勾起，保持 3 秒\n· 绷脚：脚尖向下绷直，保持 3 秒\n· 环绕：以踝关节为中心画圈\n\n每小时做 10-20 次。我们科室还做了一个踝泵闯关小游戏，让锻炼像玩游戏一样，家属可以扫床头的二维码一起玩。" },
+  { k:["下床","活动","跌倒","起床"], q:"术后什么时候能下床？",
+    a:"下床时间由医生根据手术方式决定，请遵医嘱：\n· 首次下床一定通知护士陪同\n· 牢记起床三部曲：躺 30 秒 → 坐 30 秒 → 站 30 秒\n· 穿防滑鞋，使用助行器\n\n跌倒是我们严防的头号风险，千万不要自己逞强。" },
+  { k:["引流管","管子","尿管"], q:"身上的引流管要注意什么？",
+    a:"身上有引流管期间：\n· 翻身活动时先固定好管路，避免牵拉打折\n· 引流袋位置低于伤口\n· 护士会定时记录引流量和颜色\n\n如果发现引流液突然增多、变鲜红，请立即按呼叫器。" },
+  { k:["饮食","吃什么","喝什么","补"], q:"术后能吃什么？",
+    a:"术后饮食循序渐进：\n· 麻醉清醒后先少量饮水，无恶心呕吐再进流食\n· 逐步过渡到高蛋白、高维生素饮食：鱼、蛋、瘦肉、牛奶\n· 多吃蔬菜水果预防便秘\n\n糖尿病患者我们会请营养科会诊，单独制定饮食方案。" },
+  { k:["便秘","大便","解不出"], q:"术后便秘怎么办？",
+    a:"卧床和镇痛药都容易引起便秘，可以这样预防：\n· 多喝水、多吃富含纤维的蔬果\n· 顺时针按摩腹部，每天 2-3 次\n· 必要时告诉护士，可使用缓泻剂\n\n不要用力屏气排便，尤其是老年患者。" },
+  { k:["拆线","伤口","换药","洗澡"], q:"伤口什么时候拆线？能洗澡吗？",
+    a:"一般术后 12-14 天拆线（具体遵医嘱）：\n· 保持伤口敷料清洁干燥\n· 拆线前不要淋浴浸湿伤口\n· 如伤口红肿、渗液、发热，及时告诉我们\n\n出院后换药可以在门诊完成。" },
+  { k:["复诊","复查","出院后"], q:"出院后多久复查？",
+    a:"出院时请收好出院小结：\n· 一般术后 1 个月、3 个月、半年门诊复查\n· 复查请携带影像资料\n· 出院后我们会电话随访，小程序里也可以随时看复诊提醒\n\n出现发热、伤口异常、肢体肿胀疼痛，请及时就诊。" },
+  { k:["医保","报销","费用","钱"], q:"医保怎么报销？",
+    a:"我院支持医保一站式结算：\n· 入院时请在护士站登记医保信息\n· 出院时在结算窗口直接报销\n· 异地医保需提前备案\n\n具体报销比例和目录，可以咨询一楼医保服务窗口，护士站也可以帮您指引。" },
+  { k:["陪护","家属","陪床","探视"], q:"家属可以陪护吗？",
+    a:"为了保证休息和感控：\n· 每位患者限 1 名固定陪护\n· 陪护需持陪护证，在护士站办理\n· 探视时间以病区公告为准\n\n感谢理解与配合。" },
+  { k:["拐杖","助行器","走路"], q:"助行器怎么用？",
+    a:"使用助行器/拐杖的口诀：\n· 先移助行器，再迈患肢，最后迈健肢\n· 保持身体直立，不要前倾\n· 初次使用必须有护士或家属在旁保护\n\n责任护士会在床旁手把手教您，学会为止。" },
+  { k:["紧张","害怕","睡不着","焦虑","失眠"], q:"术前紧张睡不着怎么办？",
+    a:"术前紧张非常常见，您不是一个人：\n· 可以在手机上先做一遍 3D 术前云参观，提前看看手术室什么样\n· 数字人护士宣教视频随时能看\n· 还是睡不着，告诉夜班护士，医生可以酌情用助眠药物\n\n把担心说出来，我们一起解决。" }
+];
+const FALLBACK = "这个问题超出了我目前的知识库范围。\n为了您的安全，我已记录该问题，建议按床头呼叫器，由您的责任护士为您解答。\n\n（正式版将接入医院大模型，未命中问题自动转人工并沉淀进知识库）";
+const chatBox = document.getElementById('chatBox');
+const chipsBox = document.getElementById('chips');
+const HOT = ["术前能吃饭吗","踝泵怎么做","麻醉疼不疼","什么时候下床","出院后多久复查","睡不着怎么办"];
+function addMsg(text, who){
+  const m = document.createElement('div');
+  m.className = 'msg ' + who;
+  if (who === 'ai'){
+    m.innerHTML = `<div class="avatar">骨</div><div class="bub"></div>`;
+    chatBox.appendChild(m);
+    const bub = m.querySelector('.bub');
+    bub.classList.add('typing');
+    let i = 0;
+    const t = setInterval(() => {
+      bub.textContent = text.slice(0, ++i);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      if (i >= text.length){ clearInterval(t); bub.classList.remove('typing'); }
+    }, 18);
+  } else {
+    m.innerHTML = `<div class="bub"></div>`;
+    m.querySelector('.bub').textContent = text;
+    chatBox.appendChild(m);
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+function matchKB(q){
+  let best = null, score = 0;
+  KB.forEach(item => {
+    let s = 0;
+    item.k.forEach(k => { if (q.includes(k)) s += k.length; });
+    if (q === item.q) s += 100;
+    if (s > score){ score = s; best = item; }
+  });
+  return score > 0 ? best.a : FALLBACK;
+}
+function ask(text){
+  const inp = document.getElementById('qInput');
+  const q = (text || inp.value).trim();
+  if (!q) return;
+  addMsg(q, 'me');
+  inp.value = "";
+  setTimeout(() => addMsg(matchKB(q), 'ai'), 350);
+}
+HOT.forEach(h => {
+  const c = document.createElement('span');
+  c.className = 'chip'; c.textContent = h;
+  c.onclick = () => ask(h);
+  chipsBox.appendChild(c);
+});
+addMsg("您好，我是骨一 AI 宣教助手。术前术后的问题都可以问我，比如：术前能吃饭吗、踝泵怎么做。", 'ai');
+function aiTab(t){
+  document.getElementById('sub-chat').classList.toggle('on', t==='chat');
+  document.getElementById('sub-video').classList.toggle('on', t==='video');
+  document.getElementById('ai-chat').style.display = t==='chat' ? 'flex' : 'none';
+  document.getElementById('ai-video').style.display = t==='video' ? 'block' : 'none';
+}
+
+/* ========== 首页二维码（托管后自动生成真实地址） ========== */
+(function(){
+  const url = location.href;
+  const img = document.getElementById('homeQr');
+  const tip = document.getElementById('homeQrTip');
+  if (url.startsWith('http')){
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=6&data=" + encodeURIComponent(url);
+    tip.textContent = "扫码后可在手机端完整体验全部雏形";
+  } else {
+    img.style.display = 'none';
+    tip.textContent = "当前为本地预览；上传至可访问链接后，此处自动生成分享二维码";
+  }
+})();
+</script>
+</body>
+</html>
