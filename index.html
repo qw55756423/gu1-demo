@@ -63,6 +63,7 @@
   }
   .i1{background:linear-gradient(135deg,#0B4EA2,#2E7CE6);} .i2{background:linear-gradient(135deg,#0d7a4f,#27ae60);}
   .i3{background:linear-gradient(135deg,#5a3fa0,#8a5fd8);} .i4{background:linear-gradient(135deg,#c0392b,#e67e22);}
+  .i5{background:linear-gradient(135deg,#0e7490,#22d3ee);}
   .card h3 { font-size:14.5px; color:#12303f; }
   .card .c-tag { font-size:10px; color:#2E7CE6; background:#E8F1FD; border-radius:9px; padding:1px 7px; margin-left:5px; }
   .card .desc { font-size:11.5px; color:#5a6b7d; line-height:1.8; margin-top:7px; }
@@ -86,6 +87,16 @@
   }
   .t-viewport { position:absolute; inset:0; overflow:hidden; cursor:grab; }
   .t-viewport.dragging { cursor:grabbing; }
+  .t-loading {
+    position:absolute; inset:0; z-index:22; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:10px; background:#0a1e3c; color:#9ec7ff; font-size:13px; letter-spacing:2px;
+  }
+  .t-loading.hide { display:none; }
+  .t-loading .spin {
+    width:26px; height:26px; border-radius:50%; border:3px solid rgba(120,180,255,.25);
+    border-top-color:#2E7CE6; animation:rot 1s linear infinite;
+  }
+  @keyframes rot { to { transform:rotate(360deg); } }
   .t-stage { position:absolute; top:0; left:0; height:100%; transition:transform .08s linear; will-change:transform; }
   .t-stage img { height:100%; display:block; user-select:none; -webkit-user-drag:none; pointer-events:none; }
   .t-stage.zoomin { animation:zoomin .9s ease both; }
@@ -287,10 +298,15 @@
           <h3>3D 术前云参观<span class="c-tag">雏形已做出</span></h3>
           <div class="desc">没进手术室，先走一遍手术室：病房 → 准备间 → 手术室 → 复苏室，点热点听讲解。</div>
         </div>
-        <div class="card" onclick="goTab('ai')">
+        <div class="card" onclick="goAI('chat')">
           <div class="c-ic i4">🤖</div>
-          <h3>AI 宣教问答 + 数字人<span class="c-tag">雏形已做出</span></h3>
-          <div class="desc">患者凌晨的问题 AI 先答；数字人宣教视频一次制作、永久复用，支持方言。</div>
+          <h3>AI 宣教问答助手<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">患者凌晨的问题 AI 先答，答不了的转责任护士；支持方言、24 小时在线。</div>
+        </div>
+        <div class="card" onclick="goAI('video')">
+          <div class="c-ic i5">🎬</div>
+          <h3>数字人宣教视频<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">宣教脚本一次制作、永久复用，可生成方言版、字幕版，标准宣教不走样。</div>
         </div>
         <div class="card" onclick="goTab('game')">
           <div class="c-ic i2">🎮</div>
@@ -327,6 +343,7 @@
           <div id="tSpots"></div>
         </div>
       </div>
+      <div class="t-loading" id="tLoading"><div class="spin"></div><div>场景加载中…</div></div>
       <div class="t-drag-hint">← 按住拖动环顾四周，点击蓝色光点听讲解 →</div>
       <div class="t-infocard" id="tCard">
         <span class="ic-close" onclick="tCloseCard()">✕</span>
@@ -416,6 +433,11 @@ function goTab(t){
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab===t));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   document.getElementById('p-'+t).classList.add('on');
+  if (t === 'tour') requestAnimationFrame(() => tRender(true));
+}
+function goAI(sub){
+  goTab('ai');
+  aiTab(sub);
 }
 
 /* ========== 3D 云参观 ========== */
@@ -466,6 +488,7 @@ function tRender(animate){
   document.getElementById('tNextBtn').textContent = tCur === tScenes.length-1 ? "完成参观 ✓" : "走进下一站 →";
   tCloseCard();
   tStage.classList.remove('zoomin');
+  document.getElementById('tLoading').classList.remove('hide');
   tImg.src = s.img;
   tImg.onload = () => {
     const h = tViewport.clientHeight;
@@ -476,6 +499,7 @@ function tRender(animate){
     tStage.style.transform = `translateX(${tPosX}px)`;
     if (animate){ void tStage.offsetWidth; tStage.classList.add('zoomin'); }
     tRenderSpots(s);
+    document.getElementById('tLoading').classList.add('hide');
   };
   if (tImg.complete && tImg.naturalWidth) tImg.onload();
   tRenderSteps();
@@ -538,6 +562,8 @@ tViewport.addEventListener('touchend', tOnUp);
 tViewport.addEventListener('click', () => { if(!tMoved) tCloseCard(); });
 window.addEventListener('resize', () => tRender(false));
 tRender(false);
+/* 预加载全部 4 张场景图，切换站点秒开、不再等待 */
+tScenes.forEach(s => { const im = new Image(); im.src = s.img; });
 
 /* ========== AI 宣教问答 ========== */
 const KB = [
