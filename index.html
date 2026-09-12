@@ -277,9 +277,10 @@
   <div class="row">
     <button class="on" data-tab="home" onclick="goTab('home')">🏠 首页</button>
     <button data-tab="tour" onclick="goTab('tour')">🥽 3D云参观</button>
-    <button data-tab="ai" onclick="goTab('ai')">🤖 AI宣教助手</button>
-    <button data-tab="game" onclick="goTab('game')">🎮 踝泵闯关</button>
     <button data-tab="app" onclick="goTab('app')">📱 小程序</button>
+    <button data-tab="video" onclick="goAI('video')">🎬 数字人宣教</button>
+    <button data-tab="game" onclick="goTab('game')">🎮 踝泵闯关</button>
+    <button data-tab="chat" onclick="goAI('chat')">🤖 AI问答助手</button>
   </div>
 </div>
 
@@ -298,10 +299,10 @@
           <h3>3D 术前云参观<span class="c-tag">雏形已做出</span></h3>
           <div class="desc">没进手术室，先走一遍手术室：病房 → 准备间 → 手术室 → 复苏室，点热点听讲解。</div>
         </div>
-        <div class="card" onclick="goAI('chat')">
-          <div class="c-ic i4">🤖</div>
-          <h3>AI 宣教问答助手<span class="c-tag">雏形已做出</span></h3>
-          <div class="desc">患者凌晨的问题 AI 先答，答不了的转责任护士；支持方言、24 小时在线。</div>
+        <div class="card" onclick="goTab('app')">
+          <div class="c-ic i1">📱</div>
+          <h3>智慧护理小程序<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">入院 → 术前 → 术后 → 出院全流程宣教，装进每一位患者的手机里。</div>
         </div>
         <div class="card" onclick="goAI('video')">
           <div class="c-ic i5">🎬</div>
@@ -313,10 +314,10 @@
           <h3>康复训练游戏化<span class="c-tag">雏形已做出</span></h3>
           <div class="desc">踝泵闯关小游戏：勾脚、绷脚、环绕三关，让 80 岁老人主动做功能锻炼。</div>
         </div>
-        <div class="card" onclick="goTab('app')">
-          <div class="c-ic i1">📱</div>
-          <h3>智慧护理小程序<span class="c-tag">雏形已做出</span></h3>
-          <div class="desc">入院 → 术前 → 术后 → 出院全流程宣教，装进每一位患者的手机里。</div>
+        <div class="card" onclick="goAI('chat')">
+          <div class="c-ic i4">🤖</div>
+          <h3>AI 宣教问答助手<span class="c-tag">雏形已做出</span></h3>
+          <div class="desc">患者凌晨的问题 AI 先答，答不了的转责任护士；支持方言、24 小时在线。</div>
         </div>
       </div>
       <div class="home-qr">
@@ -436,7 +437,9 @@ function goTab(t){
   if (t === 'tour') requestAnimationFrame(() => tRender(true));
 }
 function goAI(sub){
-  goTab('ai');
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab===sub));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('p-ai').classList.add('on');
   aiTab(sub);
 }
 
